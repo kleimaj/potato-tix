@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/kleimaj/potato-tix/issues"
   },
-  "homepage": "https://github.com/kleimaj/potato-tix#readme"
+  "homepage": "https://github.com/kleimaj/potato-tix#readme",
+  "dependencies": {
+    "puppeteer": "^13.0.0"
+  }
 }
