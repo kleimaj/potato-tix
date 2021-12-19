@@ -30,8 +30,10 @@ async function potatoScrape() {
         // Navigate to page
         await page.goto('https://www.thebakedpotato.com/events-calendar/');
         // Grab selector of first element
-        let element = await page.waitForSelector("#event-1327 > div > h1");
-        let ticketButton = await page.waitForSelector('#event-1327 > div > a');
+        // let element = await page.waitForSelector("#event-1327 > div > h1");
+        let element = await page.waitForSelector(".event > div > h1");
+        
+        let ticketButton = await page.waitForSelector('.event > div > a');
         // Extract text
         var text = await page.evaluate(element => element.textContent, element)
         // Log Text
@@ -44,7 +46,7 @@ async function potatoScrape() {
         var nodeList = await page.evaluate(ticketItems => ticketItems.id, ticketItems)
 
         console.log(ticketItems)
-        console.log(nodeList)
+        // console.log(nodeList)
         // Close Browser instance
         browser.close()
 }
