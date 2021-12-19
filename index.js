@@ -42,11 +42,12 @@ async function potatoScrape() {
         // console.log(href)
         await page.goto(href); // wait for the page to load
 
-        var ticketItems = await page.waitForSelector('.tribe-tickets__item');
-        var nodeList = await page.evaluate(ticketItems => ticketItems.id, ticketItems)
+        // var ticketItems = await page.waitForSelector('.tribe-tickets__item');
+        // var nodeList = await page.evaluate(ticketItems => ticketItems.id, ticketItems)
+        var nodeList = await page.evaluate(()=> Array.from(document.querySelectorAll('.tribe-tickets__item'), e => e.id));
 
-        console.log(ticketItems)
-        // console.log(nodeList)
+        // console.log(ticketItems)
+        console.log(nodeList)
         // Close Browser instance
         browser.close()
 }
