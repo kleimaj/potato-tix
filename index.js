@@ -4,6 +4,10 @@ const puppeteer = require('puppeteer');
 // https://www.thebakedpotato.com/events-calendar/
 // https://www.thesaurus.com/browse/smart
 
+function getTicketCount(selector) {
+    console.log(selector)
+}
+
 async function scrape() {
         // Initialize Browser instance
         const browser = await puppeteer.launch({});
@@ -30,7 +34,8 @@ async function scrape() {
         var nodeList = await page.evaluate(()=> Array.from(document.querySelectorAll('.tribe-tickets__item'), e => e.id));
 
         // console.log(ticketItems)
-        console.log(nodeList)
+        // console.log(nodeList)
+        nodeList.forEach((item) => getTicketCount(item));
         // Close Browser instance
         browser.close()
 }
