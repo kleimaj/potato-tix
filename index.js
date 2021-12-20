@@ -1,14 +1,9 @@
 // https://dev.to/code_jedi/web-scraping-in-nodejs-2lkf
 const puppeteer = require('puppeteer');
 
+
 // https://www.thebakedpotato.com/events-calendar/
 // https://www.thesaurus.com/browse/smart
-
-async function getTicketCount(selector, page) {
-    console.log(selector)
-    var el = await page.evaluate(()=> document.querySelector('.'+selector))
-    console.log(el);
-}
 
 async function scrape() {
         // Initialize Browser instance
@@ -42,6 +37,8 @@ async function scrape() {
                 set2: 0,
                 patio: 0
             }
+            const PATIO_COUNT = 26;
+            const INSIDE_COUNT = 65;
             let ticketCount = 0;
             const elements = Array.from(document.querySelectorAll('.tribe-tickets__item'));
             // check if sold out
@@ -54,12 +51,12 @@ async function scrape() {
                     }
                     const tixAvailable = parseInt(elements[idx].querySelector('input').value)
                     if (isPatio) {
-                        const count = 26 - tixAvailable
+                        const count = PATIO_COUNT - tixAvailable
                         ticketCount+= count;
                         resultMap['patio'] = count;
                     }
                     else {
-                        const count = (65 - tixAvailable)
+                        const count = (INSIDE_COUNT - tixAvailable)
                         ticketCount+= count;
                         if (idx == 0) {
                             resultMap['set1'] = count;
@@ -69,14 +66,14 @@ async function scrape() {
                     }
                 } else { //it's sold out, add to ticketCount
                     if (isPatio) {
-                        ticketCount+= 26
-                        resultMap['patio'] = 26;
+                        ticketCount+= PATIO_COUNT
+                        resultMap['patio'] = PATIO_COUNT;
                     } else {
-                        ticketCount+= 65
+                        ticketCount+= INSIDE_COUNT
                         if (idx == 0) {
-                            resultMap['set1'] = 65;
+                            resultMap['set1'] = INSIDE_COUNT;
                         } else if (idx == 1) {
-                            resultMap['set2'] = 65;
+                            resultMap['set2'] = INSIDE_COUNT;
                         }
                     }
                 }
@@ -86,16 +83,7 @@ async function scrape() {
 
         });
 
-        // console.log(ticketItems)
         console.log(res)
-        // await nodeList.forEach((item) => {
-        // for (const item of nodeList) {
-        //     // await getTicketCount(item, page)
-        //     const el = await page.evaluate((item)=> {
-        //         return document.getElementById(item);
-        //     })
-        //     console.log(el);
-        // };
         // Close Browser instance
         browser.close()
 }
