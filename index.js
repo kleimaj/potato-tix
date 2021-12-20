@@ -36,17 +36,29 @@ async function scrape() {
         var res = await page.evaluate(()=> {
             // return Array.from(document.querySelectorAll('.tribe-tickets__item'), e => e.id)
             // get ticket group elements
-            const isPatio = elements[idx].querySelector('.tribe-tickets__item__content__title').textContent.includes('Patio')
+            let resultMap = {
+                ticketCount: 0,
+                set1: 0,
+                set2: 0,
+                patio: 0
+            }
             let ticketCount = 0;
             const elements = Array.from(document.querySelectorAll('.tribe-tickets__item'));
             // check if sold out
-            const availablitiy = elements.map((item) => item.getAttribute('data-available'))
+            const availablitiy = elements.map((item) => item.getAttribute('data-available'));
             availablitiy.forEach((available, idx) => {
+                const isPatio = elements[idx].querySelector('.tribe-tickets__item__content__title').textContent.includes('Patio');
                 if (available) { // compute amount of tickets available
                     for (let i = 0; i < 70; i++) {
                         elements[idx].querySelector('.tribe-tickets__item__quantity__add').click();
                     }
-                    const tixAvailable = parseInt(element[idx].querySelector('input').value)
+                    const tixAvailable = parseInt(elements[idx].querySelector('input').value)
+                    if (isPatio) {
+                        ticketCount+= (26 - tixAvailable);
+                    }
+                    else {
+                        ticketCount+= (65 - tixAvailable)
+                    }
                 } else { //it's sold out, add to ticketCount
                     if (isPatio) {
                         ticketCount+= 26
@@ -55,6 +67,8 @@ async function scrape() {
                     }
                 }
             })
+            resultMap['ticketCount'] = ticketCount;
+            return resultMap
 
         });
 
