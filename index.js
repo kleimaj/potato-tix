@@ -16,22 +16,21 @@ async function scrape() {
         // Grab selector of first element
         // let element = await page.waitForSelector("#event-1327 > div > h1");
         let element = await page.waitForSelector(".event > div > h1");
+        let dateSelector = await page.waitForSelector('.date')
         
         let ticketButton = await page.waitForSelector('.event > div > a');
         // Extract text
-        var text = await page.evaluate(element => element.textContent, element)
+        var text = await page.evaluate(element => element.textContent, element);
+        let date = await page.evaluate(dateSelector => dateSelector.textContent, dateSelector);
         // Log Text
-        console.log(text);
+        console.log(text,' | ', date);
         var href = await page.evaluate(ticketButton => ticketButton.href, ticketButton);
-        // console.log(href)
+
         await page.goto(href); // wait for the page to load
 
-        // var ticketItems = await page.waitForSelector('.tribe-tickets__item');
-        // var nodeList = await page.evaluate(ticketItems => ticketItems.id, ticketItems)
         var res = await page.evaluate(()=> {
-            // return Array.from(document.querySelectorAll('.tribe-tickets__item'), e => e.id)
             // get ticket group elements
-            let resultMap = {
+            const resultMap = {
                 ticketCount: 0,
                 set1: 0,
                 set2: 0,
@@ -49,14 +48,14 @@ async function scrape() {
                     for (let i = 0; i < 70; i++) {
                         elements[idx].querySelector('.tribe-tickets__item__quantity__add').click();
                     }
-                    const tixAvailable = parseInt(elements[idx].querySelector('input').value)
+                    const tixAvailable = parseInt(elements[idx].querySelector('input').value);
                     if (isPatio) {
-                        const count = PATIO_COUNT - tixAvailable
+                        const count = PATIO_COUNT - tixAvailable;
                         ticketCount+= count;
                         resultMap['patio'] = count;
                     }
                     else {
-                        const count = (INSIDE_COUNT - tixAvailable)
+                        const count = (INSIDE_COUNT - tixAvailable);
                         ticketCount+= count;
                         if (idx == 0) {
                             resultMap['set1'] = count;
@@ -66,10 +65,10 @@ async function scrape() {
                     }
                 } else { //it's sold out, add to ticketCount
                     if (isPatio) {
-                        ticketCount+= PATIO_COUNT
+                        ticketCount+= PATIO_COUNT;
                         resultMap['patio'] = PATIO_COUNT;
                     } else {
-                        ticketCount+= INSIDE_COUNT
+                        ticketCount+= INSIDE_COUNT;
                         if (idx == 0) {
                             resultMap['set1'] = INSIDE_COUNT;
                         } else if (idx == 1) {
@@ -79,12 +78,12 @@ async function scrape() {
                 }
             })
             resultMap['ticketCount'] = ticketCount;
-            return resultMap
+            return resultMap;
 
         });
 
-        console.log(res)
+        console.log(res);
         // Close Browser instance
-        browser.close()
+        browser.close();
 }
 scrape();
