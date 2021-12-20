@@ -4,8 +4,10 @@ const puppeteer = require('puppeteer');
 // https://www.thebakedpotato.com/events-calendar/
 // https://www.thesaurus.com/browse/smart
 
-function getTicketCount(selector) {
+async function getTicketCount(selector, page) {
     console.log(selector)
+    var el = await page.evaluate(()=> document.querySelector('.'+selector))
+    console.log(el);
 }
 
 async function scrape() {
@@ -31,11 +33,45 @@ async function scrape() {
 
         // var ticketItems = await page.waitForSelector('.tribe-tickets__item');
         // var nodeList = await page.evaluate(ticketItems => ticketItems.id, ticketItems)
-        var nodeList = await page.evaluate(()=> Array.from(document.querySelectorAll('.tribe-tickets__item'), e => e.id));
+        var res = await page.evaluate(()=> {
+            // return Array.from(document.querySelectorAll('.tribe-tickets__item'), e => e.id)
+            // get ticket group elements
+            let ticketCount = 0;
+            const elements = Array.from(document.querySelectorAll('.tribe-tickets__item'));
+            // check if sold out
+            const availablitiy = elements.map((item) => item.getAttribute('data-available'))
+            availablitiy.forEach((available, idx) => {
+                if (available) { // compute amount of tickets available
+
+                } else { //it's sold out, add to ticketCount
+                    switch (idx) {
+                        case 0: //8pm inside
+                            ticketCount+= 65
+                            break;
+                        case 1: //10pm inside
+                            ticketCount+= 65
+                            break;
+                        case 2: //8pm patio
+                            ticketCount+= 26
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            })
+
+        });
 
         // console.log(ticketItems)
-        // console.log(nodeList)
-        nodeList.forEach((item) => getTicketCount(item));
+        console.log(res)
+        // await nodeList.forEach((item) => {
+        // for (const item of nodeList) {
+        //     // await getTicketCount(item, page)
+        //     const el = await page.evaluate((item)=> {
+        //         return document.getElementById(item);
+        //     })
+        //     console.log(el);
+        // };
         // Close Browser instance
         browser.close()
 }
