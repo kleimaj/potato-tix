@@ -20,10 +20,9 @@ async function scrape() {
         
         let ticketButton = await page.waitForSelector('.event > div > a');
         // Extract text
-        var text = await page.evaluate(element => element.textContent, element);
+        var artist = await page.evaluate(element => element.textContent, element);
         let date = await page.evaluate(dateSelector => dateSelector.textContent, dateSelector);
         // Log Text
-        console.log(text,' | ', date);
         var href = await page.evaluate(ticketButton => ticketButton.href, ticketButton);
 
         await page.goto(href); // wait for the page to load
@@ -31,10 +30,8 @@ async function scrape() {
         var res = await page.evaluate(()=> {
             // get ticket group elements
             const resultMap = {
-                ticketCount: 0,
-                set1: 0,
-                set2: 0,
-                patio: 0
+                artist: '',
+                date: '',
             }
             const PATIO_COUNT = 26;
             const INSIDE_COUNT = 65;
@@ -57,10 +54,11 @@ async function scrape() {
                     else {
                         const count = (INSIDE_COUNT - tixAvailable);
                         ticketCount+= count;
-                        if (idx == 0) {
-                            resultMap['set1'] = count;
-                        } else {
+                        // refactor this
+                        if ('set1' in resultMap) {
                             resultMap['set2'] = count;
+                        } else {
+                            resultMap['set1'] = count;
                         }
                     }
                 } else { //it's sold out, add to ticketCount
@@ -69,10 +67,11 @@ async function scrape() {
                         resultMap['patio'] = PATIO_COUNT;
                     } else {
                         ticketCount+= INSIDE_COUNT;
-                        if (idx == 0) {
-                            resultMap['set1'] = INSIDE_COUNT;
-                        } else if (idx == 1) {
+                        // refactor this
+                        if ('set1' in resultMap) {
                             resultMap['set2'] = INSIDE_COUNT;
+                        } else if (idx == 1) {
+                            resultMap['set1'] = INSIDE_COUNT;
                         }
                     }
                 }
@@ -81,7 +80,8 @@ async function scrape() {
             return resultMap;
 
         });
-
+        res['artist'] = artist;
+        res['date'] = date;
         console.log(res);
         // Close Browser instance
         browser.close();
