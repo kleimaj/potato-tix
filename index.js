@@ -54,16 +54,30 @@ async function scrape() {
                     }
                     const tixAvailable = parseInt(elements[idx].querySelector('input').value)
                     if (isPatio) {
-                        ticketCount+= (26 - tixAvailable);
+                        const count = 26 - tixAvailable
+                        ticketCount+= count;
+                        resultMap['patio'] = count;
                     }
                     else {
-                        ticketCount+= (65 - tixAvailable)
+                        const count = (65 - tixAvailable)
+                        ticketCount+= count;
+                        if (idx == 0) {
+                            resultMap['set1'] = count;
+                        } else {
+                            resultMap['set2'] = count;
+                        }
                     }
                 } else { //it's sold out, add to ticketCount
                     if (isPatio) {
                         ticketCount+= 26
+                        resultMap['patio'] = 26;
                     } else {
                         ticketCount+= 65
+                        if (idx == 0) {
+                            resultMap['set1'] = 65;
+                        } else if (idx == 1) {
+                            resultMap['set2'] = 65;
+                        }
                     }
                 }
             })
