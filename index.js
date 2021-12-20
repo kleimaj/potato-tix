@@ -36,26 +36,22 @@ async function scrape() {
         var res = await page.evaluate(()=> {
             // return Array.from(document.querySelectorAll('.tribe-tickets__item'), e => e.id)
             // get ticket group elements
+            const isPatio = elements[idx].querySelector('.tribe-tickets__item__content__title').textContent.includes('Patio')
             let ticketCount = 0;
             const elements = Array.from(document.querySelectorAll('.tribe-tickets__item'));
             // check if sold out
             const availablitiy = elements.map((item) => item.getAttribute('data-available'))
             availablitiy.forEach((available, idx) => {
                 if (available) { // compute amount of tickets available
-
+                    for (let i = 0; i < 70; i++) {
+                        elements[idx].querySelector('.tribe-tickets__item__quantity__add').click();
+                    }
+                    const tixAvailable = parseInt(element[idx].querySelector('input').value)
                 } else { //it's sold out, add to ticketCount
-                    switch (idx) {
-                        case 0: //8pm inside
-                            ticketCount+= 65
-                            break;
-                        case 1: //10pm inside
-                            ticketCount+= 65
-                            break;
-                        case 2: //8pm patio
-                            ticketCount+= 26
-                            break;
-                        default:
-                            break;
+                    if (isPatio) {
+                        ticketCount+= 26
+                    } else {
+                        ticketCount+= 65
                     }
                 }
             })
