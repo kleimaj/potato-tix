@@ -29,8 +29,9 @@ async function scrape() {
             let artists = Array.from(document.querySelectorAll('.event > div >h1')).map((title)=>title.textContent);
             let dates = Array.from(document.querySelectorAll('.date')).map((date)=>date.textContent);
             let anchors = Array.from(document.querySelectorAll('.event > .title > a')).map((anchor)=>anchor.href)
+            let imgs = Array.from(document.querySelectorAll('.event > div > img')).map((img) => img.src);
 
-            return {artists, dates, anchors}
+            return {artists, dates, anchors, imgs}
         })
         // await page.goto(cal.anchors[15]);
         for (let i = 0; i < 3; i++) {
